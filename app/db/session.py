@@ -1,4 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-client = AsyncIOMotorClient("mongodb://localhost:27017")
-db = client["db"]
+from app.core.config import settings
+
+client = AsyncIOMotorClient(settings.mongo_db)
+db = client[settings.mongo_name]
