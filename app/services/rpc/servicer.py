@@ -1,9 +1,9 @@
 import grpc
 
 from app.core.loging import logger
-from app.backend import weather_pb2_grpc, weather_pb2
-from app.backend.services.live import handle_live_weather
-from app.backend.services.history import handle_weather_history
+from app.services.rpc import weather_pb2_grpc, weather_pb2
+from app.services.weather.live import handle_live_weather
+from app.services.weather.history import handle_weather_history
 
 
 class WeatherServiceServicer(weather_pb2_grpc.WeatherServiceServicer):

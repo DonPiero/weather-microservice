@@ -3,20 +3,21 @@ import aiohttp
 
 from app.core.config import settings
 from app.core.loging import logger
-from app.db.models import WeatherData
+from app.db.models.weather import WeatherData
 from app.db.session import db
 from app.db.repositories.insert_live import insert_weather_data
-from app.backend import weather_pb2
+from app.services.rpc import weather_pb2
 
 
 async def handle_live_weather(request, context) -> weather_pb2.WeatherResponse:
     try:
         logger.debug(f"Handling live weather request for city: {request.city_name}")
 
-        if dict(context.invocation_metadata()).get("x-api-key") != settings.grpc_api_key:
-            raise PermissionError("Invalid API key")
+        email = dict(context.invocation_metadata()).get("user-email")
+        if not email or dict(context.invocation_metadata()).get("x-api-key") != settings.grpc_api_key:
+            raise PermissionError("User not authorized or invalid API key.")
 
-        logger.debug("API key validated successfully.")
+        logger.debug("API key and user email validated successfully.")
 
         city = request.city_name.strip().lower()
         if not city:
@@ -47,7 +48,8 @@ async def handle_live_weather(request, context) -> weather_pb2.WeatherResponse:
             data = await resp.json()
 
             weather = WeatherData(
-                city_name=data["name"],
+                email=email,
+                city_name=data["name"].strip().lower(),
                 temperature=data["main"]["temp"],
                 weather_description=data["weather"][0]["description"],
                 humidity=data["main"]["humidity"],
@@ -89,6 +91,7 @@ async def handle_live_weather(request, context) -> weather_pb2.WeatherResponse:
                 await resp.release()
             if session:
                 await session.close()
+
     except PermissionError as e:
         logger.error(f"Invalid x-api-key protection key: {e}")
         context.set_code(grpc.StatusCode.PERMISSION_DENIED)

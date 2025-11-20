@@ -7,8 +7,13 @@ class Settings(BaseSettings):
 
     mongo_db: str
     mongo_name: str
+
     weather_api_key: str
     grpc_api_key: str
+
+    jwt_secret_key: str
+    jwt_algorithm: str
+    jwt_expiration_minutes: int
 
 
 settings = Settings()

@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from app.backend import weather_pb2 as weather__pb2
+from app.services.rpc import weather_pb2 as weather__pb2
 
 GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
@@ -17,10 +17,10 @@ except ImportError:
 
 if _version_not_supported:
     raise RuntimeError(
-        f'The backend package installed is at version {GRPC_VERSION},'
+        f'The services package installed is at version {GRPC_VERSION},'
         + ' but the generated code in weather_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
-        + f' Please upgrade your backend module to grpcio>={GRPC_GENERATED_VERSION}'
+        + f' Please upgrade your services module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
@@ -32,7 +32,7 @@ class WeatherServiceStub(object):
         """Constructor.
 
         Args:
-            channel: A backend.Channel.
+            channel: A services.Channel.
         """
         self.GetWeather = channel.unary_unary(
                 '/weather.WeatherService/GetWeather',
