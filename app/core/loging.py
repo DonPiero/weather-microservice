@@ -7,7 +7,7 @@ logs_directory.mkdir(parents=True, exist_ok=True)
 logs_file = logs_directory / "app.log"
 
 logger = logging.getLogger("weather_microservice")
-logger.setLevel(logging.WARN)
+logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter("%(levelname)s - %(message)s")
 
